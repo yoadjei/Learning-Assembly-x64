@@ -1,0 +1,113 @@
+# Makefile for XOR Cipher
+# NASM x86_64 Assembly Program
+
+# Variables
+PROGRAM = xor_cipher
+SOURCE = server.asm
+OBJECT = server.o
+
+# Assembler and linker
+NASM = nasm
+LD = ld
+
+# Flags
+NASM_FLAGS = -f elf64 -g
+LD_FLAGS = 
+
+# Default target
+all: build
+
+# Build the program
+build: $(PROGRAM)
+
+$(PROGRAM): $(OBJECT)
+	@echo "Linking $(PROGRAM)..."
+	$(LD) $(LD_FLAGS) -o $(PROGRAM) $(OBJECT)
+	@echo "Build complete!"
+
+$(OBJECT): $(SOURCE)
+	@echo "Assembling $(SOURCE)..."
+	$(NASM) $(NASM_FLAGS) $(SOURCE) -o $(OBJECT)
+
+# Run the program
+run: $(PROGRAM)
+	@echo "Running XOR Cipher..."
+	@echo "===================="
+	./$(PROGRAM)
+
+# Clean build artifacts
+clean:
+	@echo "Cleaning up..."
+	rm -f $(OBJECT) $(PROGRAM)
+	@echo "Clean complete!"
+
+# Install dependencies (if needed)
+install-deps:
+	@echo "Installing dependencies..."
+	sudo apt update
+	sudo apt install -y nasm build-essential
+	@echo "Dependencies installed!"
+
+# Debug build
+debug: NASM_FLAGS += -F dwarf
+debug: build
+
+# Test encryption and decryption
+test: $(PROGRAM)
+	@echo "Testing XOR Cipher..."
+	@echo "===================="
+	@echo "This is an interactive program."
+	@echo "Test cases to try:"
+	@echo "1. Encrypt 'Hello World' with key 'secret'"
+	@echo "2. Decrypt the result with the same key"
+	@echo "3. Try different keys and messages"
+	@echo ""
+	@echo "Starting program..."
+	./$(PROGRAM)
+
+# Demo with predefined inputs
+demo: $(PROGRAM)
+	@echo "XOR Cipher Demo"
+	@echo "==============="
+	@echo "Note: This program requires interactive input"
+	@echo "Try these test cases:"
+	@echo ""
+	@echo "Test 1 - Basic encryption:"
+	@echo "  Mode: 1 (encrypt)"
+	@echo "  Text: Hello"
+	@echo "  Key: key"
+	@echo ""
+	@echo "Test 2 - Basic decryption:"
+	@echo "  Mode: 2 (decrypt)" 
+	@echo "  Text: [use output from encryption]"
+	@echo "  Key: key"
+	@echo ""
+	./$(PROGRAM)
+
+# Security test
+security-test: $(PROGRAM)
+	@echo "Security Testing Notes:"
+	@echo "======================"
+	@echo "1. XOR cipher is vulnerable to frequency analysis"
+	@echo "2. Key should be as long as the message for perfect security"
+	@echo "3. Never reuse keys with different messages"
+	@echo "4. This implementation is for educational purposes only"
+	@echo ""
+	@echo "Testing with various inputs..."
+	./$(PROGRAM)
+
+# Help target
+help:
+	@echo "Available targets:"
+	@echo "  build         - Compile the program"
+	@echo "  run           - Run the program interactively"
+	@echo "  clean         - Remove build artifacts"
+	@echo "  test          - Run the program with test guidance"
+	@echo "  demo          - Show demo instructions and run"
+	@echo "  security-test - Run with security testing notes"
+	@echo "  debug         - Build with debug symbols"
+	@echo "  install-deps  - Install required dependencies"
+	@echo "  help          - Show this help message"
+
+# Phony targets
+.PHONY: all build run clean install-deps debug test demo security-test help

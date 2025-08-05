@@ -1,0 +1,143 @@
+# Makefile for Memory Dump Tool
+# NASM x86_64 Assembly Program
+
+# Variables
+PROGRAM = memory_dump
+SOURCE = server.asm
+OBJECT = server.o
+
+# Assembler and linker
+NASM = nasm
+LD = ld
+
+# Flags
+NASM_FLAGS = -f elf64 -g
+LD_FLAGS = 
+
+# Default target
+all: build
+
+# Build the program
+build: $(PROGRAM)
+
+$(PROGRAM): $(OBJECT)
+	@echo "Linking $(PROGRAM)..."
+	$(LD) $(LD_FLAGS) -o $(PROGRAM) $(OBJECT)
+	@echo "Build complete!"
+
+$(OBJECT): $(SOURCE)
+	@echo "Assembling $(SOURCE)..."
+	$(NASM) $(NASM_FLAGS) $(SOURCE) -o $(OBJECT)
+
+# Run the program
+run: $(PROGRAM)
+	@echo "Running Memory Dump Tool..."
+	@echo "=========================="
+	./$(PROGRAM)
+
+# Clean build artifacts
+clean:
+	@echo "Cleaning up..."
+	rm -f $(OBJECT) $(PROGRAM)
+	@echo "Clean complete!"
+
+# Install dependencies (if needed)
+install-deps:
+	@echo "Installing dependencies..."
+	sudo apt update
+	sudo apt install -y nasm build-essential
+	@echo "Dependencies installed!"
+
+# Debug build
+debug: NASM_FLAGS += -F dwarf
+debug: build
+
+# Test with sample data
+test: $(PROGRAM)
+	@echo "Testing Memory Dump Tool..."
+	@echo "=========================="
+	@echo "The program will show the address of sample data."
+	@echo "Use that address to test the memory dump functionality."
+	@echo ""
+	@echo "Example test cases:"
+	@echo "1. Use the displayed sample data address"
+	@echo "2. Try dumping 64 bytes"
+	@echo "3. Try dumping 16 bytes for a clean single line"
+	@echo ""
+	./$(PROGRAM)
+
+# Demo with guided instructions
+demo: $(PROGRAM)
+	@echo "Memory Dump Tool Demo"
+	@echo "===================="
+	@echo "This tool displays memory contents in hex and ASCII format."
+	@echo ""
+	@echo "Instructions:"
+	@echo "1. The program will show a sample data address"
+	@echo "2. Enter that address (or any valid memory address)"
+	@echo "3. Enter the number of bytes to dump (1-256)"
+	@echo "4. View the formatted hex/ASCII output"
+	@echo ""
+	@echo "Starting demo..."
+	./$(PROGRAM)
+
+# Security test - demonstrates memory access
+security-test: $(PROGRAM)
+	@echo "Memory Access Security Testing"
+	@echo "=============================="
+	@echo "Note: This program attempts to read from specified memory addresses."
+	@echo "Invalid addresses may cause segmentation faults."
+	@echo ""
+	@echo "Safe test addresses:"
+	@echo "- Use the sample data address shown by the program"
+	@echo "- Addresses within the program's memory space"
+	@echo ""
+	@echo "Unsafe addresses to avoid:"
+	@echo "- 0x0 (null pointer)"
+	@echo "- Very high addresses (kernel space)"
+	@echo "- Random addresses"
+	@echo ""
+	./$(PROGRAM)
+
+# Advanced testing
+test-advanced: $(PROGRAM)
+	@echo "Advanced Memory Dump Testing"
+	@echo "============================"
+	@echo "Test cases to try:"
+	@echo ""
+	@echo "1. Small dump (16 bytes) - single line output"
+	@echo "2. Medium dump (64 bytes) - multiple lines"
+	@echo "3. Large dump (256 bytes) - maximum size"
+	@echo "4. Edge case (1 byte) - minimum size"
+	@echo ""
+	./$(PROGRAM)
+
+# Show sample data contents
+show-sample: $(PROGRAM)
+	@echo "Sample Data Contents"
+	@echo "==================="
+	@echo "The program contains built-in sample data for testing:"
+	@echo "- ASCII text strings"
+	@echo "- Alphabet and numbers"
+	@echo "- Binary data (0x00-0x0F)"
+	@echo ""
+	@echo "Run the program to see the actual memory address and contents."
+	@echo ""
+
+# Help target
+help:
+	@echo "Available targets:"
+	@echo "  build         - Compile the program"
+	@echo "  run           - Run the program interactively"
+	@echo "  clean         - Remove build artifacts"
+	@echo "  test          - Run with test guidance"
+	@echo "  demo          - Run with demo instructions"
+	@echo "  security-test - Run with security notes"
+	@echo "  test-advanced - Run advanced test scenarios"
+	@echo "  show-sample   - Show info about sample data"
+	@echo "  debug         - Build with debug symbols"
+	@echo "  install-deps  - Install required dependencies"
+	@echo "  help          - Show this help message"
+
+# Phony targets
+.PHONY: all build run clean install-deps debug test demo security-test test-advanced show-sample help

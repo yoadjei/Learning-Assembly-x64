@@ -1,0 +1,83 @@
+# Makefile for Binary-to-Decimal Converter
+# NASM x86_64 Assembly Program
+
+# Variables
+PROGRAM = binary_converter
+SOURCE = server.asm
+OBJECT = server.o
+
+# Assembler and linker
+NASM = nasm
+LD = ld
+
+# Flags
+NASM_FLAGS = -f elf64 -g
+LD_FLAGS = 
+
+# Default target
+all: build
+
+# Build the program
+build: $(PROGRAM)
+
+$(PROGRAM): $(OBJECT)
+	@echo "Linking $(PROGRAM)..."
+	$(LD) $(LD_FLAGS) -o $(PROGRAM) $(OBJECT)
+	@echo "Build complete!"
+
+$(OBJECT): $(SOURCE)
+	@echo "Assembling $(SOURCE)..."
+	$(NASM) $(NASM_FLAGS) $(SOURCE) -o $(OBJECT)
+
+# Run the program
+run: $(PROGRAM)
+	@echo "Running Binary-to-Decimal Converter..."
+	@echo "=========================================="
+	./$(PROGRAM)
+
+# Clean build artifacts
+clean:
+	@echo "Cleaning up..."
+	rm -f $(OBJECT) $(PROGRAM)
+	@echo "Clean complete!"
+
+# Install dependencies (if needed)
+install-deps:
+	@echo "Installing dependencies..."
+	sudo apt update
+	sudo apt install -y nasm build-essential
+	@echo "Dependencies installed!"
+
+# Debug build
+debug: NASM_FLAGS += -F dwarf
+debug: build
+
+# Test with sample inputs
+test: $(PROGRAM)
+	@echo "Testing Binary-to-Decimal Converter..."
+	@echo "======================================"
+	@echo "Test 1: Binary 1010 (should be 10)"
+	@echo "1010" | ./$(PROGRAM)
+	@echo ""
+	@echo "Test 2: Binary 11111111 (should be 255)"
+	@echo "11111111" | ./$(PROGRAM)
+	@echo ""
+	@echo "Test 3: Binary 1 (should be 1)"
+	@echo "1" | ./$(PROGRAM)
+	@echo ""
+	@echo "Test 4: Binary 0 (should be 0)"
+	@echo "0" | ./$(PROGRAM)
+
+# Help target
+help:
+	@echo "Available targets:"
+	@echo "  build       - Compile the program"
+	@echo "  run         - Run the program interactively"
+	@echo "  clean       - Remove build artifacts"
+	@echo "  test        - Run automated tests"
+	@echo "  debug       - Build with debug symbols"
+	@echo "  install-deps- Install required dependencies"
+	@echo "  help        - Show this help message"
+
+# Phony targets
+.PHONY: all build run clean install-deps debug test help

@@ -1,0 +1,95 @@
+# ================================================================
+# GROUP 7: Bubble Sort in ASM - Makefile
+# Ubuntu 24.02 Compatible Build System
+# ================================================================
+
+# Project configuration
+PROJECT_NAME = bubble-sort
+ASM_FILE = server.asm
+EXECUTABLE = $(PROJECT_NAME)
+OBJECT_FILE = $(PROJECT_NAME).o
+
+# Tools
+ASM = nasm
+LINKER = ld
+RM = rm -f
+
+# Flags
+ASM_FLAGS = -f elf64 -g -F dwarf
+LINKER_FLAGS = --dynamic-linker /lib64/ld-linux-x86-64.so.2
+
+# Default target
+.PHONY: all
+all: build
+
+# Build target - compiles and links the program
+.PHONY: build
+build: $(EXECUTABLE)
+	@echo "✅ Build complete: $(EXECUTABLE)"
+	@echo "🚀 Run with: make run"
+
+$(EXECUTABLE): $(OBJECT_FILE)
+	@echo "🔗 Linking $(EXECUTABLE)..."
+	$(LINKER) $(LINKER_FLAGS) -o $(EXECUTABLE) $(OBJECT_FILE)
+
+$(OBJECT_FILE): $(ASM_FILE)
+	@echo "🔨 Assembling $(ASM_FILE)..."
+	$(ASM) $(ASM_FLAGS) $(ASM_FILE) -o $(OBJECT_FILE)
+
+# Run target - executes the program
+.PHONY: run
+run: $(EXECUTABLE)
+	@echo "🎯 Running Bubble Sort..."
+	@echo "----------------------------------------"
+	./$(EXECUTABLE)
+	@echo "----------------------------------------"
+
+# Debug target - runs with debugging info
+.PHONY: debug
+debug: $(EXECUTABLE)
+	@echo "🐛 Starting debugger..."
+	gdb ./$(EXECUTABLE)
+
+# Clean target - removes generated files
+.PHONY: clean
+clean:
+	@echo "🧹 Cleaning up..."
+	$(RM) $(OBJECT_FILE) $(EXECUTABLE)
+	@echo "✨ Clean complete"
+
+# Install dependencies (if needed)
+.PHONY: install-deps
+install-deps:
+	@echo "📦 Installing dependencies..."
+	sudo apt update
+	sudo apt install -y nasm gdb build-essential
+
+# Help target
+.PHONY: help
+help:
+	@echo "🚀 Bubble Sort Assembly Project"
+	@echo "================================"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  build       - Compile and link the program"
+	@echo "  run         - Execute the bubble sort program"
+	@echo "  debug       - Run with GDB debugger"
+	@echo "  clean       - Remove generated files"
+	@echo "  install-deps- Install required dependencies"
+	@echo "  help        - Show this help message"
+	@echo ""
+	@echo "Usage examples:"
+	@echo "  make build  # Compile the program"
+	@echo "  make run    # Run the program"
+	@echo "  make clean  # Clean up files"
+
+# Show project info
+.PHONY: info
+info:
+	@echo "📊 Project Information"
+	@echo "======================"
+	@echo "Project: $(PROJECT_NAME)"
+	@echo "Source:  $(ASM_FILE)"
+	@echo "Target:  $(EXECUTABLE)"
+	@echo "Arch:    x86_64"
+	@echo "Format:  ELF64"

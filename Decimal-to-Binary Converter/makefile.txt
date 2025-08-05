@@ -1,0 +1,97 @@
+# Makefile for Decimal-to-Binary Converter
+# NASM x86_64 Assembly Program
+
+# Variables
+PROGRAM = decimal_converter
+SOURCE = server.asm
+OBJECT = server.o
+
+# Assembler and linker
+NASM = nasm
+LD = ld
+
+# Flags
+NASM_FLAGS = -f elf64 -g
+LD_FLAGS = 
+
+# Default target
+all: build
+
+# Build the program
+build: $(PROGRAM)
+
+$(PROGRAM): $(OBJECT)
+	@echo "Linking $(PROGRAM)..."
+	$(LD) $(LD_FLAGS) -o $(PROGRAM) $(OBJECT)
+	@echo "Build complete!"
+
+$(OBJECT): $(SOURCE)
+	@echo "Assembling $(SOURCE)..."
+	$(NASM) $(NASM_FLAGS) $(SOURCE) -o $(OBJECT)
+
+# Run the program
+run: $(PROGRAM)
+	@echo "Running Decimal-to-Binary Converter..."
+	@echo "======================================"
+	./$(PROGRAM)
+
+# Clean build artifacts
+clean:
+	@echo "Cleaning up..."
+	rm -f $(OBJECT) $(PROGRAM)
+	@echo "Clean complete!"
+
+# Install dependencies (if needed)
+install-deps:
+	@echo "Installing dependencies..."
+	sudo apt update
+	sudo apt install -y nasm build-essential
+	@echo "Dependencies installed!"
+
+# Debug build
+debug: NASM_FLAGS += -F dwarf
+debug: build
+
+# Test with sample inputs
+test: $(PROGRAM)
+	@echo "Testing Decimal-to-Binary Converter..."
+	@echo "====================================="
+	@echo "Test 1: Decimal 10 (should be 1010)"
+	@echo "10" | ./$(PROGRAM)
+	@echo ""
+	@echo "Test 2: Decimal 255 (should be 11111111)"
+	@echo "255" | ./$(PROGRAM)
+	@echo ""
+	@echo "Test 3: Decimal 1 (should be 1)"
+	@echo "1" | ./$(PROGRAM)
+	@echo ""
+	@echo "Test 4: Decimal 0 (should be 0)"
+	@echo "0" | ./$(PROGRAM)
+	@echo ""
+	@echo "Test 5: Decimal 16 (should be 10000)"
+	@echo "16" | ./$(PROGRAM)
+
+# Extended test suite
+test-extended: $(PROGRAM)
+	@echo "Extended Testing..."
+	@echo "=================="
+	@echo "Powers of 2:"
+	@echo "2^0 = 1:" && echo "1" | ./$(PROGRAM)
+	@echo "2^4 = 16:" && echo "16" | ./$(PROGRAM)  
+	@echo "2^8 = 256:" && echo "256" | ./$(PROGRAM)
+	@echo "2^10 = 1024:" && echo "1024" | ./$(PROGRAM)
+
+# Help target
+help:
+	@echo "Available targets:"
+	@echo "  build          - Compile the program"
+	@echo "  run            - Run the program interactively"
+	@echo "  clean          - Remove build artifacts"
+	@echo "  test           - Run basic automated tests"
+	@echo "  test-extended  - Run extended test suite"
+	@echo "  debug          - Build with debug symbols"
+	@echo "  install-deps   - Install required dependencies"
+	@echo "  help           - Show this help message"
+
+# Phony targets
+.PHONY: all build run clean install-deps debug test test-extended help
